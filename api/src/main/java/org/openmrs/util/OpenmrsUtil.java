@@ -118,28 +118,28 @@ import org.w3c.dom.DocumentType;
  * Utility methods used in openmrs
  */
 public class OpenmrsUtil {
-	
+
 	private static Log log = LogFactory.getLog(OpenmrsUtil.class);
-	
+
 	private static Map<Locale, SimpleDateFormat> dateFormatCache = new HashMap<Locale, SimpleDateFormat>();
-	
+
 	private static Map<Locale, SimpleDateFormat> timeFormatCache = new HashMap<Locale, SimpleDateFormat>();
-		
+
 	/**
 	 * Compares origList to newList returning map of differences
-	 * 
+	 *
 	 * @param origList
 	 * @param newList
 	 * @return [List toAdd, List toDelete] with respect to origList
 	 */
 	public static <E extends Object> Collection<Collection<E>> compareLists(Collection<E> origList, Collection<E> newList) {
 		// TODO finish function
-		
+
 		Collection<Collection<E>> returnList = new Vector<Collection<E>>();
-		
+
 		Collection<E> toAdd = new LinkedList<E>();
 		Collection<E> toDel = new LinkedList<E>();
-		
+
 		// loop over the new list.
 		for (E currentNewListObj : newList) {
 			// loop over the original list
@@ -156,22 +156,22 @@ public class OpenmrsUtil {
 			if (!foundInList) {
 				toAdd.add(currentNewListObj);
 			}
-			
+
 			// all found new objects were removed from the orig list,
 			// leaving only objects needing to be removed
 			toDel = origList;
-			
+
 		}
-		
+
 		returnList.add(toAdd);
 		returnList.add(toDel);
-		
+
 		return returnList;
 	}
-	
+
 	public static boolean isStringInArray(String str, String[] arr) {
 		boolean retVal = false;
-		
+
 		if (str != null && arr != null) {
 			for (int i = 0; i < arr.length; i++) {
 				if (str.equals(arr[i])) {
@@ -181,38 +181,38 @@ public class OpenmrsUtil {
 		}
 		return retVal;
 	}
-	
+
 	public static Boolean isInNormalNumericRange(Float value, ConceptNumeric concept) {
 		if (concept.getHiNormal() == null || concept.getLowNormal() == null) {
 			return false;
 		}
 		return (value <= concept.getHiNormal() && value >= concept.getLowNormal());
 	}
-	
+
 	public static Boolean isInCriticalNumericRange(Float value, ConceptNumeric concept) {
 		if (concept.getHiCritical() == null || concept.getLowCritical() == null) {
 			return false;
 		}
 		return (value <= concept.getHiCritical() && value >= concept.getLowCritical());
 	}
-	
+
 	public static Boolean isInAbsoluteNumericRange(Float value, ConceptNumeric concept) {
 		if (concept.getHiAbsolute() == null || concept.getLowAbsolute() == null) {
 			return false;
 		}
 		return (value <= concept.getHiAbsolute() && value >= concept.getLowAbsolute());
 	}
-	
+
 	public static Boolean isValidNumericValue(Float value, ConceptNumeric concept) {
 		if (concept.getHiAbsolute() == null || concept.getLowAbsolute() == null) {
 			return true;
 		}
 		return (value <= concept.getHiAbsolute() && value >= concept.getLowAbsolute());
 	}
-	
+
 	/**
 	 * Return a string representation of the given file
-	 * 
+	 *
 	 * @param file
 	 * @return String file contents
 	 * @throws IOException
@@ -230,10 +230,10 @@ public class OpenmrsUtil {
 		reader.close();
 		return fileData.toString();
 	}
-	
+
 	/**
 	 * Return a byte array representation of the given file
-	 * 
+	 *
 	 * @param file
 	 * @return byte[] file contents
 	 * @throws IOException
@@ -259,14 +259,14 @@ public class OpenmrsUtil {
 				}
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Copy file from inputStream onto the outputStream inputStream is not closed in this method
 	 * outputStream /is/ closed at completion of this method
-	 * 
+	 *
 	 * @param inputStream Stream to copy from
 	 * @param outputStream Stream/location to copy to
 	 * @throws IOException thrown if an error occurs during read/write
@@ -280,10 +280,10 @@ public class OpenmrsUtil {
 				catch (Exception e) { /* pass */
 				}
 			}
-			
+
 			return;
 		}
-		
+
 		InputStream in = null;
 		OutputStream out = null;
 		try {
@@ -310,9 +310,9 @@ public class OpenmrsUtil {
 			catch (Exception e) { /* pass */
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * Get mime type of the given file
 	 *
@@ -323,10 +323,10 @@ public class OpenmrsUtil {
 		MimetypesFileTypeMap mimeMap = new MimetypesFileTypeMap();
 		return mimeMap.getContentType(file);
 	}
-	
+
 	/**
 	 * Look for a file named <code>filename</code> in folder
-	 * 
+	 *
 	 * @param folder
 	 * @param filename
 	 * @return true/false whether filename exists in folder
@@ -338,7 +338,7 @@ public class OpenmrsUtil {
 		if (!folder.isDirectory()) {
 			return false;
 		}
-		
+
 		for (File f : folder.listFiles()) {
 			if (f.getName().equals(filename)) {
 				return true;
@@ -346,28 +346,28 @@ public class OpenmrsUtil {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * These are the privileges that are required by OpenMRS. This looks for privileges marked as
 	 * {@link AddOnStartup} to know which privs, upon startup or loading of a module, to insert into
 	 * the database if they do not exist already. These privileges are not allowed to be deleted.
 	 * They are marked as 'locked' in the administration screens.
-	 * 
+	 *
 	 * @return privileges core to the system
 	 * @see PrivilegeConstants
 	 * @see Context#checkCoreDataset()
 	 */
 	public static Map<String, String> getCorePrivileges() {
 		Map<String, String> corePrivileges = new HashMap<String, String>();
-		
+
 		// TODO getCorePrivileges() is called so so many times that getClassesWithAnnotation() better do some catching.
 		Set<Class<?>> classes = OpenmrsClassScanner.getInstance().getClassesWithAnnotation(HasAddOnStartupPrivileges.class);
-		
+
 		for (Class cls : classes) {
 			Field[] flds = cls.getDeclaredFields();
 			for (Field fld : flds) {
 				String fieldValue = null;
-				
+
 				AddOnStartup privilegeAnnotation = fld.getAnnotation(AddOnStartup.class);
 				if (null == privilegeAnnotation) {
 					continue;
@@ -375,7 +375,7 @@ public class OpenmrsUtil {
 				if (!privilegeAnnotation.core()) {
 					continue;
 				}
-				
+
 				try {
 					fieldValue = (String) fld.get(null);
 				}
@@ -385,28 +385,28 @@ public class OpenmrsUtil {
 				corePrivileges.put(fieldValue, privilegeAnnotation.description());
 			}
 		}
-		
+
 		// always add the module core privileges back on
 		for (org.openmrs.Privilege privilege : ModuleFactory.getPrivileges()) {
 			corePrivileges.put(privilege.getPrivilege(), privilege.getDescription());
 		}
-		
+
 		return corePrivileges;
 	}
-	
+
 	/**
 	 * All roles returned by this method are inserted into the database if they do not exist
 	 * already. These roles are also forbidden to be deleted from the administration screens.
-	 * 
+	 *
 	 * @return roles that are core to the system
 	 */
 	public static Map<String, String> getCoreRoles() {
 		Map<String, String> roles = new HashMap<String, String>();
-		
+
 		Field[] flds = RoleConstants.class.getDeclaredFields();
 		for (Field fld : flds) {
 			String fieldValue = null;
-			
+
 			AddOnStartup roleAnnotation = fld.getAnnotation(AddOnStartup.class);
 			if (null == roleAnnotation) {
 				continue;
@@ -414,7 +414,7 @@ public class OpenmrsUtil {
 			if (!roleAnnotation.core()) {
 				continue;
 			}
-			
+
 			try {
 				fieldValue = (String) fld.get(null);
 			}
@@ -423,47 +423,47 @@ public class OpenmrsUtil {
 			}
 			roles.put(fieldValue, roleAnnotation.description());
 		}
-		
+
 		return roles;
 	}
-	
+
 	/**
 	 * Initialize global settings Find and load modules
-	 * 
+	 *
 	 * @param p properties from runtime configuration
 	 */
 	public static void startup(Properties p) {
-		
+
 		// Override global OpenMRS constants if specified by the user
-		
+
 		// Allow for "demo" mode where patient data is obscured
 		String val = p.getProperty("obscure_patients", null);
 		if (val != null && "true".equalsIgnoreCase(val)) {
 			OpenmrsConstants.OBSCURE_PATIENTS = true;
 		}
-		
+
 		val = p.getProperty("obscure_patients.family_name", null);
 		if (val != null) {
 			OpenmrsConstants.OBSCURE_PATIENTS_FAMILY_NAME = val;
 		}
-		
+
 		val = p.getProperty("obscure_patients.given_name", null);
 		if (val != null) {
 			OpenmrsConstants.OBSCURE_PATIENTS_GIVEN_NAME = val;
 		}
-		
+
 		val = p.getProperty("obscure_patients.middle_name", null);
 		if (val != null) {
 			OpenmrsConstants.OBSCURE_PATIENTS_MIDDLE_NAME = val;
 		}
-		
+
 		// Override the default "openmrs" database name
 		val = p.getProperty("connection.database_name", null);
 		if (val == null) {
 			// the database name wasn't supplied explicitly, guess it
 			// from the connection string
 			val = p.getProperty("connection.url", null);
-			
+
 			if (val != null) {
 				try {
 					int endIndex = val.lastIndexOf("?");
@@ -480,20 +480,20 @@ public class OpenmrsUtil {
 				}
 			}
 		}
-		
+
 		// set the business database name
 		val = p.getProperty("connection.database_business_name", null);
 		if (val == null) {
 			val = OpenmrsConstants.DATABASE_NAME;
 		}
 		OpenmrsConstants.DATABASE_BUSINESS_NAME = val;
-		
+
 		// set global log level
 		applyLogLevels();
-		
+
 		setupLogAppenders();
 	}
-	
+
 	/**
 	 * Set the org.openmrs log4j logger's level if global property log.level.openmrs (
 	 * OpenmrsConstants.GLOBAL_PROPERTY_LOG_LEVEL ) exists. Valid values for global property are
@@ -502,7 +502,7 @@ public class OpenmrsUtil {
 	public static void applyLogLevels() {
 		AdministrationService adminService = Context.getAdministrationService();
 		String logLevel = adminService.getGlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_LOG_LEVEL, "");
-		
+
 		String[] levels = logLevel.split(",");
 		for (String level : levels) {
 			String[] classAndLevel = level.split(":");
@@ -513,15 +513,15 @@ public class OpenmrsUtil {
 			}
 		}
 	}
-	
+
 	/**
 	 * Setup root level log appenders.
-	 * 
+	 *
 	 * @since 1.9.2
 	 */
 	public static void setupLogAppenders() {
 		Logger rootLogger = Logger.getRootLogger();
-		
+
 		FileAppender fileAppender = null;
 		@SuppressWarnings("rawtypes")
 		Enumeration appenders = rootLogger.getAllAppenders();
@@ -532,11 +532,11 @@ public class OpenmrsUtil {
 				break;
 			}
 		}
-		
+
 		String logLayout = Context.getAdministrationService().getGlobalProperty(OpenmrsConstants.GP_LOG_LAYOUT,
 		    "%p - %C{1}.%M(%L) |%d{ISO8601}| %m%n");
 		PatternLayout patternLayout = new PatternLayout(logLayout);
-		
+
 		String logLocation = null;
 		try {
 			logLocation = OpenmrsUtil.getOpenmrsLogLocation();
@@ -554,25 +554,25 @@ public class OpenmrsUtil {
 			log.error("Error while setting an OpenMRS log file to " + logLocation, e);
 		}
 	}
-	
+
 	/**
 	 * Set the log4j log level for class <code>logClass</code> to <code>logLevel</code>.
-	 * 
+	 *
 	 * @param logClass optional string giving the class level to change. Defaults to
 	 *            OpenmrsConstants.LOG_CLASS_DEFAULT . Should be something like org.openmrs.___
 	 * @param logLevel one of OpenmrsConstants.LOG_LEVEL_*
 	 */
 	public static void applyLogLevel(String logClass, String logLevel) {
-		
+
 		if (logLevel != null) {
-			
+
 			// the default log level is org.openmrs
 			if (StringUtils.isEmpty(logClass)) {
 				logClass = OpenmrsConstants.LOG_CLASS_DEFAULT;
 			}
-			
+
 			Logger logger = Logger.getLogger(logClass);
-			
+
 			logLevel = logLevel.toLowerCase();
 			if (OpenmrsConstants.LOG_LEVEL_TRACE.equals(logLevel)) {
 				logger.setLevel(Level.TRACE);
@@ -592,11 +592,11 @@ public class OpenmrsUtil {
 			}
 		}
 	}
-	
+
 	/**
 	 * Takes a String like "size=compact|order=date" and returns a Map&lt;String,String&gt; from the keys
 	 * to the values.
-	 * 
+	 *
 	 * @param paramList <code>String</code> with a list of parameters
 	 * @return Map&lt;String, String&gt; of the parameters passed
 	 */
@@ -617,7 +617,7 @@ public class OpenmrsUtil {
 		}
 		return ret;
 	}
-	
+
 	public static <Arg1, Arg2 extends Arg1> boolean nullSafeEquals(Arg1 d1, Arg2 d2) {
 		if (d1 == null) {
 			return d2 == null;
@@ -627,7 +627,7 @@ public class OpenmrsUtil {
 			return d1.equals(d2);
 		}
 	}
-	
+
 	/**
 	 * Compares two java.util.Date objects, but handles java.sql.Timestamp (which is not directly
 	 * comparable to a date) by dropping its nanosecond value.
@@ -644,7 +644,7 @@ public class OpenmrsUtil {
 		}
 		return d1.compareTo(d2);
 	}
-	
+
 	/**
 	 * Compares two Date/Timestamp objects, treating null as the earliest possible date.
 	 */
@@ -660,7 +660,7 @@ public class OpenmrsUtil {
 			return compare(d1, d2);
 		}
 	}
-	
+
 	/**
 	 * Compares two Date/Timestamp objects, treating null as the earliest possible date.
 	 */
@@ -676,7 +676,7 @@ public class OpenmrsUtil {
 			return compare(d1, d2);
 		}
 	}
-	
+
 	public static <E extends Comparable<E>> int compareWithNullAsLowest(E c1, E c2) {
 		if (c1 == null && c2 == null) {
 			return 0;
@@ -689,7 +689,7 @@ public class OpenmrsUtil {
 			return c1.compareTo(c2);
 		}
 	}
-	
+
 	public static <E extends Comparable<E>> int compareWithNullAsGreatest(E c1, E c2) {
 		if (c1 == null && c2 == null) {
 			return 0;
@@ -702,10 +702,10 @@ public class OpenmrsUtil {
 			return c1.compareTo(c2);
 		}
 	}
-	
+
 	/**
 	 * Converts a collection to a String with a specified separator between all elements
-	 * 
+	 *
 	 * @param c Collection to be joined
 	 * @param separator string to put between all elements
 	 * @return a String representing the toString() of all elements in c, separated by separator
@@ -714,7 +714,7 @@ public class OpenmrsUtil {
 		if (c == null) {
 			return "";
 		}
-		
+
 		StringBuilder ret = new StringBuilder();
 		for (Iterator<E> i = c.iterator(); i.hasNext();) {
 			ret.append(i.next());
@@ -724,14 +724,14 @@ public class OpenmrsUtil {
 		}
 		return ret.toString();
 	}
-	
+
 	public static Set<Concept> conceptSetHelper(String descriptor) {
 		Set<Concept> ret = new HashSet<Concept>();
 		if (descriptor == null || descriptor.length() == 0) {
 			return ret;
 		}
 		ConceptService cs = Context.getConceptService();
-		
+
 		for (StringTokenizer st = new StringTokenizer(descriptor, "|"); st.hasMoreTokens();) {
 			String s = st.nextToken().trim();
 			boolean isSet = s.startsWith("set:");
@@ -759,10 +759,10 @@ public class OpenmrsUtil {
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * Parses and loads a delimited list of concept ids or names
-	 * 
+	 *
 	 * @param delimitedString the delimited list of concept ids or names
 	 * @param delimiter the delimiter, e.g. ","
 	 * @return the list of concepts
@@ -770,27 +770,27 @@ public class OpenmrsUtil {
 	 */
 	public static List<Concept> delimitedStringToConceptList(String delimitedString, String delimiter) {
 		List<Concept> ret = null;
-		
+
 		if (delimitedString != null) {
 			String[] tokens = delimitedString.split(delimiter);
 			for (String token : tokens) {
 				Integer conceptId = null;
-				
+
 				try {
 					conceptId = Integer.valueOf(token);
 				}
 				catch (NumberFormatException nfe) {
 					conceptId = null;
 				}
-				
+
 				Concept c = null;
-				
+
 				if (conceptId != null) {
 					c = Context.getConceptService().getConcept(conceptId);
 				} else {
 					c = Context.getConceptService().getConceptByName(token);
 				}
-				
+
 				if (c != null) {
 					if (ret == null) {
 						ret = new ArrayList<Concept>();
@@ -799,18 +799,18 @@ public class OpenmrsUtil {
 				}
 			}
 		}
-		
+
 		return ret;
 	}
-	
+
 	public static Map<String, Concept> delimitedStringToConceptMap(String delimitedString, String delimiter) {
 		Map<String, Concept> ret = null;
-		
+
 		if (delimitedString != null) {
 			String[] tokens = delimitedString.split(delimiter);
 			for (String token : tokens) {
 				Concept c = Context.getConceptService().getConcept(token);
-				
+
 				if (c != null) {
 					if (ret == null) {
 						ret = new HashMap<String, Concept>();
@@ -819,10 +819,10 @@ public class OpenmrsUtil {
 				}
 			}
 		}
-		
+
 		return ret;
 	}
-	
+
 	// TODO: properly handle duplicates
 	public static List<Concept> conceptListHelper(String descriptor) {
 		List<Concept> ret = new ArrayList<Concept>();
@@ -830,7 +830,7 @@ public class OpenmrsUtil {
 			return ret;
 		}
 		ConceptService cs = Context.getConceptService();
-		
+
 		for (StringTokenizer st = new StringTokenizer(descriptor, "|"); st.hasMoreTokens();) {
 			String s = st.nextToken().trim();
 			boolean isSet = s.startsWith("set:");
@@ -858,11 +858,11 @@ public class OpenmrsUtil {
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * Gets the date having the last millisecond of a given day. Meaning that the hours, seconds,
 	 * and milliseconds are the latest possible for that day.
-	 * 
+	 *
 	 * @param day the day.
 	 * @return the date with the last millisecond of the day.
 	 */
@@ -873,14 +873,14 @@ public class OpenmrsUtil {
 		calender.set(Calendar.MINUTE, 59);
 		calender.set(Calendar.SECOND, 59);
 		calender.set(Calendar.MILLISECOND, 999);
-		
+
 		return calender.getTime();
 	}
-	
+
 	/**
 	 * Return a date that is the same day as the passed in date, but the hours and seconds are the
 	 * earliest possible for that day.
-	 * 
+	 *
 	 * @param date date to adjust
 	 * @return a date that is the first possible time in the day
 	 * @since 1.9
@@ -889,24 +889,24 @@ public class OpenmrsUtil {
 		if (date == null) {
 			return null;
 		}
-		
+
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
 		c.set(Calendar.HOUR_OF_DAY, 0);
 		c.set(Calendar.MINUTE, 0);
 		c.set(Calendar.SECOND, 0);
 		c.set(Calendar.MILLISECOND, 0);
-		
+
 		return c.getTime();
 	}
-	
+
 	public static Date safeDate(Date d1) {
 		return new Date(d1.getTime());
 	}
-	
+
 	/**
 	 * Recursively deletes files in the given <code>dir</code> folder
-	 * 
+	 *
 	 * @param dir File directory to delete
 	 * @return true/false whether the delete was completed successfully
 	 * @throws IOException if <code>dir</code> is not a directory
@@ -915,44 +915,44 @@ public class OpenmrsUtil {
 		if (!dir.exists() || !dir.isDirectory()) {
 			throw new IOException("Could not delete directory '" + dir.getAbsolutePath() + "' (not a directory)");
 		}
-		
+
 		if (log.isDebugEnabled()) {
 			log.debug("Deleting directory " + dir.getAbsolutePath());
 		}
-		
+
 		File[] fileList = dir.listFiles();
 		for (File f : fileList) {
 			if (f.isDirectory()) {
 				deleteDirectory(f);
 			}
 			boolean success = f.delete();
-			
+
 			if (log.isDebugEnabled()) {
 				log.debug("   deleting " + f.getName() + " : " + (success ? "ok" : "failed"));
 			}
-			
+
 			if (!success) {
 				f.deleteOnExit();
 			}
 		}
-		
+
 		boolean success = dir.delete();
-		
+
 		if (!success) {
 			log.warn("   ...could not remove directory: " + dir.getAbsolutePath());
 			dir.deleteOnExit();
 		}
-		
+
 		if (success && log.isDebugEnabled()) {
 			log.debug("   ...and directory itself");
 		}
-		
+
 		return success;
 	}
-	
+
 	/**
 	 * Utility method to convert local URL to a File object.
-	 * 
+	 *
 	 * @param url an URL
 	 * @return file object for given URL or <code>null</code> if URL is not local
 	 * @should return null given null parameter
@@ -963,7 +963,7 @@ public class OpenmrsUtil {
 		}
 		return new File(url.getFile().replaceAll("%20", " "));
 	}
-	
+
 	/**
 	 * Opens input stream for given resource. This method behaves differently for different URL
 	 * types:
@@ -975,7 +975,7 @@ public class OpenmrsUtil {
 	 * API.</li>
 	 * </ul>
 	 * It is not recommended to use this method for big resources within JAR files.
-	 * 
+	 *
 	 * @param url resource URL
 	 * @return input stream for given resource
 	 * @throws IOException if any I/O error has occurred
@@ -1022,23 +1022,23 @@ public class OpenmrsUtil {
 			jarFile.close();
 		}
 	}
-	
+
 	/**
 	 * <pre>
-	 * Returns the application data directory. Searches for the value first 
+	 * Returns the application data directory. Searches for the value first
 	 * in the "OPENMRS_APPLICATION_DATA_DIRECTORY" system property and "application_data_directory" runtime property, then in the servlet
 	 * init parameter "application.data.directory." If not found, returns:
 	 * a) "{user.home}/.OpenMRS" on UNIX-based systems
 	 * b) "{user.home}\Application Data\OpenMRS" on Windows
-	 * 
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * @return The path to the directory on the file system that will hold miscellaneous data about
 	 *         the application (runtime properties, modules, etc)
 	 */
 	public static String getApplicationDataDirectory() {
 		String filepath = null;
-		
+
 		String systemProperty = System.getProperty("OPENMRS_APPLICATION_DATA_DIRECTORY");
 		//System and runtime property take precedence
 		if (systemProperty != null) {
@@ -1050,7 +1050,7 @@ public class OpenmrsUtil {
 				filepath = runtimeProperty;
 			}
 		}
-		
+
 		if (filepath == null) {
 			if (OpenmrsConstants.UNIX_BASED_OPERATING_SYSTEM) {
 				filepath = System.getProperty("user.home") + File.separator + ".OpenMRS";
@@ -1077,71 +1077,71 @@ public class OpenmrsUtil {
 					}
 				}
 			}
-			
+
 			filepath = filepath + File.separator;
 		}
-		
+
 		File folder = new File(filepath);
 		if (!folder.exists()) {
 			folder.mkdirs();
 		}
-		
+
 		return filepath;
 	}
-	
+
 	/**
 	 * Can be used to override default application data directory.
 	 * <p>
 	 * Note that it will not override application data directory provided as a system property.
-	 * 
+	 *
 	 * @param path
 	 * @since 1.11
 	 */
 	public static void setApplicationDataDirectory(String path) {
 		System.setProperty("OPENMRS_APPLICATION_DATA_DIRECTORY", path);
 	}
-	
+
 	/**
 	 * Checks if we can write to a given folder.
-	 * 
+	 *
 	 * @param folder the directory to check.
 	 * @return true if we can write to it, else false.
 	 */
 	private static boolean canWrite(File folder) {
 		try {
-			//We need to first create the folder if it does not exist, 
+			//We need to first create the folder if it does not exist,
 			//else File.canWrite() will return false even when we
 			//have the necessary permissions.
 			if (!folder.exists()) {
 				folder.mkdirs();
 			}
-			
+
 			return folder.canWrite();
 		}
 		catch (SecurityException ex) {
 			//all we wanted to know is whether we have permissions
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * Returns the location of the OpenMRS log file.
-	 * 
+	 *
 	 * @return the path to the OpenMRS log file
 	 * @since 1.9.2
 	 */
 	public static String getOpenmrsLogLocation() {
 		String logPathGP = Context.getAdministrationService().getGlobalProperty(OpenmrsConstants.GP_LOG_LOCATION, "");
 		File logPath = OpenmrsUtil.getDirectoryInApplicationDataDirectory(logPathGP);
-		
+
 		File logFile = new File(logPath, "openmrs.log");
 		return logFile.getPath();
 	}
-	
+
 	/**
 	 * Checks whether the current JVM version is at least Java 6.
-	 * 
+	 *
 	 * @throws ApplicationContextException if the current JVM version is earlier than Java 6
 	 */
 	public static void validateJavaVersion() {
@@ -1150,41 +1150,41 @@ public class OpenmrsUtil {
 			throw new APIException("OpenMRS requires Java 6, but is running under " + JdkVersion.getJavaVersion());
 		}
 	}
-	
+
 	/**
 	 * Find the given folderName in the application data directory. Or, treat folderName like an
 	 * absolute url to a directory
-	 * 
+	 *
 	 * @param folderName
 	 * @return folder capable of storing information
 	 */
 	public static File getDirectoryInApplicationDataDirectory(String folderName) throws APIException {
 		// try to load the repository folder straight away.
 		File folder = new File(folderName);
-		
+
 		// if the property wasn't a full path already, assume it was intended to
 		// be a folder in the
 		// application directory
 		if (!folder.isAbsolute()) {
 			folder = new File(OpenmrsUtil.getApplicationDataDirectory(), folderName);
 		}
-		
+
 		// now create the directory folder if it doesn't exist
 		if (!folder.exists()) {
 			log.warn("'" + folder.getAbsolutePath() + "' doesn't exist.  Creating directories now.");
 			folder.mkdirs();
 		}
-		
+
 		if (!folder.isDirectory()) {
 			throw new APIException("should.be.directory", new Object[] { folder.getAbsolutePath() });
 		}
-		
+
 		return folder;
 	}
-	
+
 	/**
 	 * Save the given xml document to the given outfile
-	 * 
+	 *
 	 * @param doc Document to be saved
 	 * @param outFile file pointer to the location the xml file is to be saved to
 	 */
@@ -1195,13 +1195,13 @@ public class OpenmrsUtil {
 			TransformerFactory tFactory = TransformerFactory.newInstance();
 			Transformer transformer = tFactory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			
+
 			DocumentType doctype = doc.getDoctype();
 			if (doctype != null) {
 				transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, doctype.getPublicId());
 				transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, doctype.getSystemId());
 			}
-			
+
 			DOMSource source = new DOMSource(doc);
 			StreamResult result = new StreamResult(outStream);
 			transformer.transform(source, result);
@@ -1223,7 +1223,7 @@ public class OpenmrsUtil {
 			}
 		}
 	}
-	
+
 	public static List<Integer> delimitedStringToIntegerList(String delimitedString, String delimiter) {
 		List<Integer> ret = new ArrayList<Integer>();
 		String[] tokens = delimitedString.split(delimiter);
@@ -1237,10 +1237,10 @@ public class OpenmrsUtil {
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * Tests if the given String starts with any of the specified prefixes
-	 * 
+	 *
 	 * @param str the string to test
 	 * @param prefixes an array of prefixes to test against
 	 * @return true if the String starts with any of the specified prefixes, otherwise false.
@@ -1251,10 +1251,10 @@ public class OpenmrsUtil {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	public static boolean isConceptInList(Concept concept, List<Concept> list) {
 		boolean ret = false;
 		if (concept != null && list != null) {
@@ -1265,13 +1265,13 @@ public class OpenmrsUtil {
 				}
 			}
 		}
-		
+
 		return ret;
 	}
-	
+
 	public static Date fromDateHelper(Date comparisonDate, Integer withinLastDays, Integer withinLastMonths,
 	        Integer untilDaysAgo, Integer untilMonthsAgo, Date sinceDate, Date untilDate) {
-		
+
 		Date ret = null;
 		if (withinLastDays != null || withinLastMonths != null) {
 			Calendar gc = Calendar.getInstance();
@@ -1289,10 +1289,10 @@ public class OpenmrsUtil {
 		}
 		return ret;
 	}
-	
+
 	public static Date toDateHelper(Date comparisonDate, Integer withinLastDays, Integer withinLastMonths,
 	        Integer untilDaysAgo, Integer untilMonthsAgo, Date sinceDate, Date untilDate) {
-		
+
 		Date ret = null;
 		if (untilDaysAgo != null || untilMonthsAgo != null) {
 			Calendar gc = Calendar.getInstance();
@@ -1310,7 +1310,7 @@ public class OpenmrsUtil {
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * @param collection
 	 * @param elements
@@ -1324,7 +1324,7 @@ public class OpenmrsUtil {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Allows easy manipulation of a Map&lt;?, Set&gt;
 	 */
@@ -1336,7 +1336,7 @@ public class OpenmrsUtil {
 		}
 		set.add(obj);
 	}
-	
+
 	public static <K, V> void addToListMap(Map<K, List<V>> map, K key, V obj) {
 		List<V> list = map.get(key);
 		if (list == null) {
@@ -1345,11 +1345,11 @@ public class OpenmrsUtil {
 		}
 		list.add(obj);
 	}
-	
+
 	/**
 	 * Get the current user's date format Will look similar to "mm-dd-yyyy". Depends on user's
 	 * locale.
-	 * 
+	 *
 	 * @return a simple date format
 	 * @should return a pattern with four y characters in it
 	 * @should not allow the returned SimpleDateFormat to be modified
@@ -1359,12 +1359,12 @@ public class OpenmrsUtil {
 		if (dateFormatCache.containsKey(locale)) {
 			return (SimpleDateFormat) dateFormatCache.get(locale).clone();
 		}
-		
+
 		// note that we are using the custom OpenmrsDateFormat class here which prevents erroneous parsing of 2-digit years
 		SimpleDateFormat sdf = new OpenmrsDateFormat(
 		        (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.SHORT, locale), locale);
 		String pattern = sdf.toPattern();
-		
+
 		if (!pattern.contains("yyyy")) {
 			// otherwise, change the pattern to be a four digit year
 			pattern = pattern.replaceFirst("yy", "yyyy");
@@ -1380,15 +1380,15 @@ public class OpenmrsUtil {
 			pattern = pattern.replaceFirst("d", "dd");
 			sdf.applyPattern(pattern);
 		}
-		
+
 		dateFormatCache.put(locale, sdf);
-		
+
 		return (SimpleDateFormat) sdf.clone();
 	}
-	
+
 	/**
 	 * Get the current user's time format Will look similar to "hh:mm a". Depends on user's locale.
-	 * 
+	 *
 	 * @return a simple time format
 	 * @should return a pattern with two h characters in it
 	 * @should not allow the returned SimpleDateFormat to be modified
@@ -1398,25 +1398,25 @@ public class OpenmrsUtil {
 		if (timeFormatCache.containsKey(locale)) {
 			return (SimpleDateFormat) timeFormatCache.get(locale).clone();
 		}
-		
+
 		SimpleDateFormat sdf = (SimpleDateFormat) DateFormat.getTimeInstance(DateFormat.SHORT, locale);
 		String pattern = sdf.toPattern();
-		
+
 		if (!(pattern.contains("hh") || pattern.contains("HH"))) {
 			// otherwise, change the pattern to be a two digit hour
 			pattern = pattern.replaceFirst("h", "hh").replaceFirst("H", "HH");
 			sdf.applyPattern(pattern);
 		}
-		
+
 		timeFormatCache.put(locale, sdf);
-		
+
 		return (SimpleDateFormat) sdf.clone();
 	}
-	
+
 	/**
 	 * Get the current user's datetime format Will look similar to "mm-dd-yyyy hh:mm a". Depends on
 	 * user's locale.
-	 * 
+	 *
 	 * @return a simple date format
 	 * @should return a pattern with four y characters and two h characters in it
 	 * @should not allow the returned SimpleDateFormat to be modified
@@ -1425,19 +1425,19 @@ public class OpenmrsUtil {
 	public static SimpleDateFormat getDateTimeFormat(Locale locale) {
 		SimpleDateFormat dateFormat;
 		SimpleDateFormat timeFormat;
-		
+
 		dateFormat = getDateFormat(locale);
 		timeFormat = getTimeFormat(locale);
-		
+
 		String pattern = dateFormat.toPattern() + " " + timeFormat.toPattern();
 		SimpleDateFormat sdf = new SimpleDateFormat();
 		sdf.applyPattern(pattern);
 		return sdf;
 	}
-	
+
 	/**
 	 * Takes a String (e.g. a user-entered one) and parses it into an object of the specified class
-	 * 
+	 *
 	 * @param string
 	 * @param clazz
 	 * @return Object of type <code>clazz</code> with the data from <code>string</code>
@@ -1527,14 +1527,14 @@ public class OpenmrsUtil {
 			throw new IllegalArgumentException(ex);
 		}
 	}
-	
+
 	/**
 	 * Loops over the collection to check to see if the given object is in that collection. This
 	 * method <i>only</i> uses the .equals() method for comparison. This should be used in the
 	 * patient/person objects on their collections. Their collections are SortedSets which use the
 	 * compareTo method for equality as well. The compareTo method is currently optimized for
 	 * sorting, not for equality. A null <code>obj</code> will return false
-	 * 
+	 *
 	 * @param objects collection to loop over
 	 * @param obj Object to look for in the <code>objects</code>
 	 * @return true/false whether the given object is found
@@ -1545,20 +1545,20 @@ public class OpenmrsUtil {
 		if (obj == null || objects == null) {
 			return false;
 		}
-		
+
 		for (Object o : objects) {
 			if (o != null && o.equals(obj)) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * Gets an out File object. If date is not provided, the current timestamp is used. If user is
 	 * not provided, the user id is not put into the filename. Assumes dir is already created
-	 * 
+	 *
 	 * @param dir directory to make the random filename in
 	 * @param date optional Date object used for the name
 	 * @param user optional User creating this file object
@@ -1570,41 +1570,41 @@ public class OpenmrsUtil {
 		do {
 			// format to print date in filenmae
 			DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd-HHmm-ssSSS");
-			
+
 			// use current date if none provided
 			if (date == null) {
 				date = new Date();
 			}
-			
+
 			StringBuilder filename = new StringBuilder();
-			
+
 			// the start of the filename is the time so we can do some sorting
 			filename.append(dateFormat.format(date));
-			
+
 			// insert the user id if they provided it
 			if (user != null) {
 				filename.append("-");
 				filename.append(user.getUserId());
 				filename.append("-");
 			}
-			
+
 			// the end of the filename is a randome number between 0 and 10000
 			filename.append(gen.nextInt() * 10000);
 			filename.append(".xml");
-			
+
 			outFile = new File(dir, filename.toString());
-			
+
 			// set to null to avoid very minimal possiblity of an infinite loop
 			date = null;
-			
+
 		} while (outFile.exists());
-		
+
 		return outFile;
 	}
-	
+
 	/**
 	 * Creates a relatively acceptable unique string of the give size
-	 * 
+	 *
 	 * @return unique string
 	 */
 	public static String generateUid(Integer size) {
@@ -1624,21 +1624,21 @@ public class OpenmrsUtil {
 		}
 		return sb.toString();
 	}
-	
+
 	/**
 	 * Creates a uid of length 20
-	 * 
+	 *
 	 * @see #generateUid(Integer)
 	 */
 	public static String generateUid() {
 		return generateUid(20);
 	}
-		
+
 	/**
 	 * Convenience method to replace Properties.store(), which isn't UTF-8 compliant <br>
 	 * NOTE: In Java 6, you will be able to pass the load() and store() methods a UTF-8
 	 * Reader/Writer object as an argument, making this method unnecessary.
-	 * 
+	 *
 	 * @param properties
 	 * @param file
 	 * @param comment
@@ -1663,12 +1663,12 @@ public class OpenmrsUtil {
 			}
 		}
 	}
-	
+
 	/**
 	 * Convenience method to replace Properties.store(), which isn't UTF-8 compliant NOTE: In Java
 	 * 6, you will be able to pass the load() and store() methods a UTF-8 Reader/Writer object as an
 	 * argument.
-	 * 
+	 *
 	 * @param properties
 	 * @param outStream
 	 * @param comment (which appears in comments in properties file)
@@ -1687,16 +1687,16 @@ public class OpenmrsUtil {
 		catch (IOException ioex) {
 			log.error("IO exception encountered trying to append to properties file" + ioex);
 		}
-		
+
 	}
-	
+
 	/**
 	 * This method is a replacement for Properties.load(InputStream) so that we can load in utf-8
 	 * characters. Currently the load method expects the inputStream to point to a latin1 encoded
 	 * file. <br>
 	 * NOTE: In Java 6, you will be able to pass the load() and store() methods a UTF-8
 	 * Reader/Writer object as an argument, making this method unnecessary.
-	 * 
+	 *
 	 * @param props the properties object to write into
 	 * @param input the input stream to read from
 	 */
@@ -1726,10 +1726,10 @@ public class OpenmrsUtil {
 			}
 		}
 	}
-	
+
 	/**
 	 * Convenience method used to load properties from the given file.
-	 * 
+	 *
 	 * @param props the properties object to be loaded into
 	 * @param propertyFile the properties file to read
 	 */
@@ -1741,10 +1741,10 @@ public class OpenmrsUtil {
 			log.error("Unable to find properties file" + fnfe);
 		}
 	}
-	
+
 	/**
 	 * Utility method for getting the translation for the passed code
-	 * 
+	 *
 	 * @param code the message key to lookup
 	 * @param args the replacement values for the translation string
 	 * @return the message, or if not found, the code
@@ -1767,7 +1767,7 @@ public class OpenmrsUtil {
 		}
 		return code;
 	}
-	
+
 	/**
 	 * Utility to check the validity of a password for a certain {@link User}. Passwords must be
 	 * non-null. Their required strength is configured via global properties:
@@ -1809,7 +1809,7 @@ public class OpenmrsUtil {
 	 * <th>null</th>
 	 * </tr>
 	 * </table>
-	 * 
+	 *
 	 * @param username user name of the user with password to validated
 	 * @param password string that will be validated
 	 * @param systemId system id of the user with password to be validated
@@ -1840,7 +1840,7 @@ public class OpenmrsUtil {
 	 * @should still work without an open session
 	 */
 	public static void validatePassword(String username, String password, String systemId) throws PasswordException {
-		
+
 		// default values for all of the global properties
 		String userGp = "true";
 		String lengthGp = "8";
@@ -1849,7 +1849,7 @@ public class OpenmrsUtil {
 		String nonDigitGp = "true";
 		String regexGp = null;
 		AdministrationService svc = null;
-		
+
 		try {
 			svc = Context.getAdministrationService();
 		}
@@ -1858,7 +1858,7 @@ public class OpenmrsUtil {
 			// defaults
 			log.debug("Unable to get global properties", apiEx);
 		}
-		
+
 		if (svc != null && Context.isSessionOpen()) {
 			// (the session won't be open here to allow for the unit test to
 			// fake not having the admin service available)
@@ -1869,15 +1869,15 @@ public class OpenmrsUtil {
 			nonDigitGp = svc.getGlobalProperty(OpenmrsConstants.GP_PASSWORD_REQUIRES_NON_DIGIT, nonDigitGp);
 			regexGp = svc.getGlobalProperty(OpenmrsConstants.GP_PASSWORD_CUSTOM_REGEX, regexGp);
 		}
-		
+
 		if (password == null) {
 			throw new WeakPasswordException();
 		}
-		
+
 		if ("true".equals(userGp) && (password.equals(username) || password.equals(systemId))) {
 			throw new WeakPasswordException();
 		}
-		
+
 		if (StringUtils.isNotEmpty(lengthGp)) {
 			try {
 				int minLength = Integer.parseInt(lengthGp);
@@ -1891,19 +1891,19 @@ public class OpenmrsUtil {
 				                + "> must be an Integer");
 			}
 		}
-		
+
 		if ("true".equals(caseGp) && !containsUpperAndLowerCase(password)) {
 			throw new InvalidCharactersPasswordException(getMessage("error.password.requireMixedCase"));
 		}
-		
+
 		if ("true".equals(digitGp) && !containsDigit(password)) {
 			throw new InvalidCharactersPasswordException(getMessage("error.password.requireNumber"));
 		}
-		
+
 		if ("true".equals(nonDigitGp) && containsOnlyDigits(password)) {
 			throw new InvalidCharactersPasswordException(getMessage("error.password.requireLetter"));
 		}
-		
+
 		if (StringUtils.isNotEmpty(regexGp)) {
 			try {
 				Pattern pattern = Pattern.compile(regexGp);
@@ -1918,7 +1918,7 @@ public class OpenmrsUtil {
 			}
 		}
 	}
-	
+
 	/**
 	 * @param test the string to test
 	 * @return true if the passed string contains both upper and lower case characters
@@ -1934,7 +1934,7 @@ public class OpenmrsUtil {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @param test the string to test
 	 * @return true if the passed string contains only numeric characters
@@ -1951,7 +1951,7 @@ public class OpenmrsUtil {
 		}
 		return StringUtils.isNotEmpty(test);
 	}
-	
+
 	/**
 	 * @param test the string to test
 	 * @return true if the passed string contains any numeric characters
@@ -1968,10 +1968,10 @@ public class OpenmrsUtil {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * A null-safe and exception safe way to close an inputstream or an outputstream
-	 * 
+	 *
 	 * @param closableStream an InputStream or OutputStream to close
 	 */
 	public static void closeStream(Closeable closableStream) {
@@ -1984,12 +1984,12 @@ public class OpenmrsUtil {
 			}
 		}
 	}
-	
+
 	/**
 	 * Convert a stack trace into a shortened version for easier viewing and data storage, excluding
 	 * those lines we are least concerned with; should average about 60% reduction in stack trace
 	 * length
-	 * 
+	 *
 	 * @param stackTrace original stack trace from an error
 	 * @return shortened stack trace
 	 * @should return null if stackTrace is null
@@ -2000,11 +2000,11 @@ public class OpenmrsUtil {
 		if (stackTrace == null) {
 			return null;
 		}
-		
+
 		List<String> results = new ArrayList<String>();
 		final Pattern exclude = Pattern.compile("(org.springframework.|java.lang.reflect.Method.invoke|sun.reflect.)");
 		boolean found = false;
-		
+
 		for (String line : stackTrace.split("\n")) {
 			Matcher m = exclude.matcher(line);
 			if (m.find()) {
@@ -2017,10 +2017,10 @@ public class OpenmrsUtil {
 				results.add(line);
 			}
 		}
-		
+
 		return StringUtils.join(results, "\n");
 	}
-	
+
 	/**
 	 * <pre>
 	 * Finds and loads the runtime properties file for a specific OpenMRS application.
@@ -2029,7 +2029,7 @@ public class OpenmrsUtil {
 	 * 2) an environment variable called "{APPLICATIONNAME}_RUNTIME_PROPERTIES_FILE"
 	 * 3) {openmrs_app_dir}/{applicationName}_runtime.properties   // openmrs_app_dir is typically {user_home}/.OpenMRS
 	 * </pre>
-	 * 
+	 *
 	 * @see #getApplicationDataDirectory()
 	 * @param applicationName (defaults to "openmrs") the name of the running OpenMRS application,
 	 *            e.g. if you have deployed OpenMRS as a web application you would give the deployed
@@ -2052,13 +2052,13 @@ public class OpenmrsUtil {
 		catch (FileNotFoundException e) {
 			log.warn("Unable to find a runtime properties file at " + new File(pathName).getAbsolutePath());
 		}
-		
+
 		try {
 			if (propertyStream == null) {
 				throw new IOException("Could not find a runtime properties file named " + pathName
 				        + " in the OpenMRS application data directory, or the current directory");
 			}
-			
+
 			Properties props = new Properties();
 			OpenmrsUtil.loadProperties(props, propertyStream);
 			propertyStream.close();
@@ -2072,20 +2072,20 @@ public class OpenmrsUtil {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Checks whether the system is running in test mode
-	 * 
+	 *
 	 * @return boolean
 	 */
-	
+
 	public static boolean isTestMode() {
 		return "true".equalsIgnoreCase(System.getProperty("FUNCTIONAL_TEST_MODE"));
 	}
-	
+
 	/**
 	 * Gets the full path and name of the runtime properties file.
-	 * 
+	 *
 	 * @param applicationName (defaults to "openmrs") the name of the running OpenMRS application,
 	 *            e.g. if you have deployed OpenMRS as a web application you would give the deployed
 	 *            context path here
@@ -2096,10 +2096,10 @@ public class OpenmrsUtil {
 		if (applicationName == null) {
 			applicationName = "openmrs";
 		}
-		
+
 		String defaultFileName = applicationName + "-runtime.properties";
 		String fileNameInTestMode = getRuntimePropertiesFileNameInTestMode();
-		
+
 		// first look in the current directory (that java was started from)
 		String pathName = fileNameInTestMode != null ? fileNameInTestMode : defaultFileName;
 		log.debug("Attempting to look for properties file in current directory: " + pathName);
@@ -2108,7 +2108,7 @@ public class OpenmrsUtil {
 		} else {
 			log.warn("Unable to find a runtime properties file at " + new File(pathName).getAbsolutePath());
 		}
-		
+
 		// next look from environment variable
 		String envVarName = applicationName.toUpperCase() + "_RUNTIME_PROPERTIES_FILE";
 		String envFileName = System.getenv(envVarName);
@@ -2126,7 +2126,7 @@ public class OpenmrsUtil {
 				log.debug("Available environment variables are named: " + System.getenv().keySet());
 			}
 		}
-		
+
 		// next look in the OpenMRS application data directory
 		File file = new File(getApplicationDataDirectory(), pathName);
 		pathName = file.getAbsolutePath();
@@ -2136,10 +2136,10 @@ public class OpenmrsUtil {
 		} else {
 			log.warn("Unable to find properties file: " + pathName);
 		}
-		
+
 		return null;
 	}
-	
+
 	public static String getRuntimePropertiesFileNameInTestMode() {
 		String filename = null;
 		if (isTestMode()) {
@@ -2148,19 +2148,19 @@ public class OpenmrsUtil {
 		}
 		return filename;
 	}
-	
+
 	/**
 	 * Gets OpenMRS version name under test mode.
-	 * 
+	 *
 	 * @return String openmrs version number
 	 */
 	public static String getOpenMRSVersionInTestMode() {
 		return System.getProperty("OPENMRS_VERSION", "openmrs");
 	}
-	
+
 	/**
 	 * Performs a case insensitive Comparison of two strings taking care of null values
-	 * 
+	 *
 	 * @param s1 the string to compare
 	 * @param s2 the string to compare
 	 * @return true if strings are equal (ignoring case)
@@ -2174,14 +2174,14 @@ public class OpenmrsUtil {
 		} else if (s2 == null) {
 			return false;
 		}
-		
+
 		return s1.equalsIgnoreCase(s2);
 	}
-	
+
 	/**
 	 * This method converts the given Long value to an Integer. If the Long value will not fit in an
 	 * Integer an exception is thrown
-	 * 
+	 *
 	 * @param longValue the value to convert
 	 * @return the long value in integer form.
 	 * @throws IllegalArgumentException if the long value does not fit into an integer
@@ -2192,11 +2192,11 @@ public class OpenmrsUtil {
 		}
 		return longValue.intValue();
 	}
-	
+
 	/**
 	 * Checks if the passed in date's day of the year is the one that comes immediately before that
 	 * of the current date
-	 * 
+	 *
 	 * @param date the date to check
 	 * @since 1.9
 	 * @return true if the date comes immediately before the current date otherwise false
@@ -2205,14 +2205,24 @@ public class OpenmrsUtil {
 		if (date == null) {
 			return false;
 		}
-		
+
 		Calendar c1 = Calendar.getInstance();
 		c1.add(Calendar.DAY_OF_YEAR, -1); // yesterday
-		
+
 		Calendar c2 = Calendar.getInstance();
 		c2.setTime(date);
-		
+
 		return (c1.get(Calendar.ERA) == c2.get(Calendar.ERA) && c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR) && c1
 		        .get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR));
+	}
+
+	/**
+	 * Check if Uid is succesfully generated with generateUid function
+	 */
+	@Test
+	public void generateUid_shouldGenerateUid() {
+		String uid = OpenmrsUtil.generateUid();
+
+		Assert.assertTrue(uid.length() > 0);
 	}
 }
